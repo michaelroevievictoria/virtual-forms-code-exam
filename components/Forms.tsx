@@ -5,7 +5,8 @@ import { NextPage } from 'next';
 import * as yup from 'yup';
 import { EMAIL_VALIDATOR, PASSWORD_VALIDATOR, NAME_VALIDATOR, confirmPasswordValidator } from '@/utils/CustomValidators';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 interface IForms {
     firstName: string,
     lastName: string,
@@ -22,6 +23,8 @@ const Forms: NextPage<Props> = ({
 
 }) => {
 
+    const router = useRouter();
+
     const validationSchema = yup.object({
         firstName: NAME_VALIDATOR,
         lastName: NAME_VALIDATOR,
@@ -30,6 +33,11 @@ const Forms: NextPage<Props> = ({
         confirmPassword: confirmPasswordValidator('password')
 
     });
+    useEffect(() => {
+        // deleting localstorage
+        localStorage.removeItem('formData')
+    }, [])
+    
     const FormBody = () => {
         const {
             values,
@@ -152,12 +160,13 @@ const Forms: NextPage<Props> = ({
                             showConfirmPassword: false
                         }}
                         onSubmit={async (formValues, { setSubmitting }) => {
-                            // const formData = {
-                            //     username: formValues.username,
-                            //     password: formValues.password
-                            // }
-
-
+                            const formData = {
+                                firstName: formValues.firstName,
+                                lastName: formValues.lastName,
+                                email: formValues.email,
+                            } 
+                            router.push('congratulations')
+                            localStorage.setItem('formData', JSON.stringify(formData))
                         }}
                     >
                         <Form>
