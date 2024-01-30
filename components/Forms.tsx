@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { EMAIL_VALIDATOR, PASSWORD_VALIDATOR, NAME_VALIDATOR, confirmPasswordValidator } from '@/utils/CustomValidators';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 interface IForms {
     firstName: string,
     lastName: string,
@@ -23,6 +23,7 @@ const Forms: NextPage<Props> = ({
 
 }) => {
 
+    const [domLoaded, setDomLoaded] = useState(false);
     const router = useRouter();
 
     const validationSchema = yup.object({
@@ -35,9 +36,15 @@ const Forms: NextPage<Props> = ({
     });
     useEffect(() => {
         // deleting localstorage
-        localStorage.removeItem('formData')
+        if (typeof window !== 'undefined') {
+            window.localStorage.removeItem('formData')
+            setDomLoaded(true)
+        } else {
+            setDomLoaded(true)
+        }
+
     }, [])
-    
+
     const FormBody = () => {
         const {
             values,
@@ -51,11 +58,11 @@ const Forms: NextPage<Props> = ({
 
         const togglePasswordVisibility = () => {
             setFieldValue('showPassword', !values.showPassword)
-          };
-        
-          const toggleConfirmPasswordVisibility = () => {
+        };
+
+        const toggleConfirmPasswordVisibility = () => {
             setFieldValue('showConfirmPassword', !values.showConfirmPassword)
-          };
+        };
         return (
             <div className='flex flex-col gap-10'>
                 <TextField
@@ -107,13 +114,13 @@ const Forms: NextPage<Props> = ({
                     helperText={touched.password ? errors.password : ''}
                     InputProps={{
                         endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={togglePasswordVisibility} edge="end">
-                              {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                          </InputAdornment>
+                            <InputAdornment position="end">
+                                <IconButton onClick={togglePasswordVisibility} edge="end">
+                                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
                         ),
-                      }}
+                    }}
                 />
                 <TextField
                     label="Confirm Password"
@@ -128,13 +135,13 @@ const Forms: NextPage<Props> = ({
                     helperText={touched.confirmPassword ? errors.confirmPassword : ''}
                     InputProps={{
                         endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
-                              {values.showConfirmPassword ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                          </InputAdornment>
+                            <InputAdornment position="end">
+                                <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
+                                    {values.showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
                         ),
-                      }}
+                    }}
                 />
 
                 <div className='mt-[20px]'>
@@ -144,39 +151,45 @@ const Forms: NextPage<Props> = ({
         )
     }
     return (
-        <div className='flex justify-center items-center h-screen'>
-            <Paper elevation={6} className='w-2/5'>
-                <div className='p-12'>
+        <>
+            {domLoaded ? (
+                <>
+                    <div className='flex justify-center items-center h-screen'>
+                        <Paper elevation={6} className='w-2/5'>
+                            <div className='p-12'>
 
-                    <Formik
-                        validationSchema={validationSchema}
-                        initialValues={{
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                            password: '',
-                            confirmPassword: '',
-                            showPassword: false,
-                            showConfirmPassword: false
-                        }}
-                        onSubmit={async (formValues, { setSubmitting }) => {
-                            const formData = {
-                                firstName: formValues.firstName,
-                                lastName: formValues.lastName,
-                                email: formValues.email,
-                            } 
-                            router.push('congratulations')
-                            localStorage.setItem('formData', JSON.stringify(formData))
-                        }}
-                    >
-                        <Form>
-                            <FormBody />
-                        </Form>
-                    </Formik>
-                </div>
-            </Paper>
+                                <Formik
+                                    validationSchema={validationSchema}
+                                    initialValues={{
+                                        firstName: '',
+                                        lastName: '',
+                                        email: '',
+                                        password: '',
+                                        confirmPassword: '',
+                                        showPassword: false,
+                                        showConfirmPassword: false
+                                    }}
+                                    onSubmit={async (formValues, { setSubmitting }) => {
+                                        const formData = {
+                                            firstName: formValues.firstName,
+                                            lastName: formValues.lastName,
+                                            email: formValues.email,
+                                        }
+                                        router.push('congratulations')
+                                        localStorage.setItem('formData', JSON.stringify(formData))
+                                    }}
+                                >
+                                    <Form>
+                                        <FormBody />
+                                    </Form>
+                                </Formik>
+                            </div>
+                        </Paper>
 
-        </div>
+                    </div>
+                </>
+            ) : null}
+        </>
     );
 }
 export default Forms;

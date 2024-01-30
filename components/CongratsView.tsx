@@ -1,5 +1,5 @@
 'use client'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Paper, Typography } from '@mui/material';
 import _ from 'lodash';
 import { useRouter } from 'next/navigation';
@@ -8,13 +8,23 @@ import { NextPage } from 'next';
 
 const CongratsView: NextPage<any> = ({ }) => {
     const router = useRouter()
-    const storedDataString = localStorage.getItem('formData');
-    const data = storedDataString ? JSON.parse(storedDataString) : null;
-
+    const [data, setData] = useState(null);
+    console.log('data',data)
     useEffect(() => {
-        if (!data) {
+
+        // Check if running on the client side
+        if (typeof window !== 'undefined') {
+            const storedDataString = localStorage.getItem('formData');
+            const parsedData = storedDataString ? JSON.parse(storedDataString) : null;
+
+            if (!parsedData) {
+                router.push('/404')
+            }
+            setData(parsedData);
+        } else {
             router.push('/404')
         }
+
     }, [])
 
     return (
