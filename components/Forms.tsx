@@ -155,7 +155,7 @@ const Forms: NextPage<Props> = ({
             {domLoaded ? (
                 <>
                     <div className='flex justify-center items-center h-screen'>
-                        <Paper elevation={6} className='w-2/5'>
+                        <Paper elevation={6} className='lg:w-2/5 w-10/12'>
                             <div className='p-12'>
 
                                 <Formik

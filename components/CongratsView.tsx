@@ -9,7 +9,7 @@ import { NextPage } from 'next';
 const CongratsView: NextPage<any> = ({ }) => {
     const router = useRouter()
     const [data, setData] = useState(null);
-    console.log('data',data)
+    console.log('data', data)
     useEffect(() => {
 
         // Check if running on the client side
@@ -29,7 +29,7 @@ const CongratsView: NextPage<any> = ({ }) => {
 
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <Container className="mx-auto p-4 bg-white shadow-lg rounded-lg">
+            <Paper elevation={6} className='lg:w-2/5 w-10/12 p-10'>
                 <Typography variant="h4" align="center" className="mb-4">
                     🎉 Congratulations, {_.get(data, 'firstName', '')} {_.get(data, 'lastName', '')}! 🎉
                 </Typography>
@@ -45,7 +45,7 @@ const CongratsView: NextPage<any> = ({ }) => {
                     <label className="block text-sm font-medium text-gray-700">Email:</label>
                     <p className="text-lg">{_.get(data, 'email', '')}</p>
                 </div>
-            </Container>
+            </Paper>
         </div>
     )
 }
